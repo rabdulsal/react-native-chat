@@ -8,6 +8,9 @@ import {
  } from 'react-native';
 
 export default class Main extends Component {
+  static navigationOptions = {
+    title: 'Chatter',
+  }
 
   state = {
     name: ''
@@ -22,6 +25,7 @@ export default class Main extends Component {
   render() {
     return (
       <View>
+        <Text style={styles.title}>Enter your name:</Text>
         <TextInput
           style={styles.nameInput}
           placeHolder="Rashad Salaam"
@@ -41,6 +45,11 @@ export default class Main extends Component {
 
 const offset = 24;
 const styles = StyleSheet.create({
+  title: {
+    marginTop: offset,
+    marginLeft: offset,
+    fontSize: offset,
+  },
   nameInput: {
     height: offset * 2,
     margin: offset,
