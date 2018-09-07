@@ -3,8 +3,7 @@ import {
   View,
   Text,
   StyleSheet,
-  TextInput,
-  TouchableOpacity
+  ScrollView
  } from 'react-native';
  import SignUpForm from './SignUpForm';
  import SignInForm from './SignInForm';
@@ -28,7 +27,7 @@ export default class Main extends Component {
 
   render() {
     return (
-      <View style={{ flex: 1, backgroundColor: 'white' }}>
+      <ScrollView style={styles.container}>
         // 1. Render Sign In Form
         <SignInForm
           onSuccessfulAuthentication={this.onSuccessfulAuthentication}
@@ -37,7 +36,7 @@ export default class Main extends Component {
         <SignUpForm
           onSuccessfulAuthentication={this.onSuccessfulAuthentication}
         />
-      </View>
+    </ScrollView>
       // <View>
       //   <Text style={styles.title}>Enter your name:</Text>
       //   <TextInput
@@ -59,20 +58,9 @@ export default class Main extends Component {
 
 const offset = 24;
 const styles = StyleSheet.create({
-  title: {
-    marginTop: offset,
-    marginLeft: offset,
-    fontSize: offset,
-  },
-  nameInput: {
-    height: offset * 2,
-    margin: offset,
-    paddingHorizontal: offset,
-    borderColor: '#111111',
-    borderWidth: 1,
-  },
-  buttonText: {
-    marginLeft: offset,
-    fontSize: offset,
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+    marginBottom: 20
   },
 });

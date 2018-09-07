@@ -78,6 +78,7 @@ const styles = {
   },
   signUpText: {
     alignSelf: 'flex-start', // Left
+    fontSize: 24,
     marginLeft: 24,
     marginTop: 20
   },

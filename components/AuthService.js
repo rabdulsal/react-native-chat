@@ -11,18 +11,15 @@ class AuthService {
     firebase.initializeApp(firebaseConfig);
   }
 
-  // **** NOTE: Won't be needed?
   observeAuth = () => {
     firebase.auth().onAuthStateChanged(this.onAuthStateChanged);
   }
 
-  onAuthStateChanged = user => {
+  onAuthStateChanged = (user) => {
     if (user) {
-      this.currentUser = firebase.auth();
-      console.log(`Auth User: ${this.currentUser}`);
+      // Do something with user variable like mayber store it
     }
   }
-  // ************************
 
   loginUser = (email, password, authenticationCallback) => {
     this.authenticationCallback = authenticationCallback;
@@ -36,27 +33,25 @@ class AuthService {
   createNewUser = (username, email, password, authenticationCallback) => {
     this.authenticationCallback = authenticationCallback;
     firebase.auth().createUserWithEmailAndPassword(email, password)
-      .then(user => this.updateUserInfo({ email, username, user }))
+      .then(() => this.updateUserInfo({ email, username }))
       .catch(error => alert(error));
   }
 
-  updateUserInfo = ({ email, username, user }) => {
-    console.log(`Current User: ${this.currentUser}`);
+  updateUserInfo = ({ email, username }) => {
     firebase.database().ref(`/users/${this.uid}`)
     .set({ email, username })
-    .then(() => this.successfullyAuthenticatedUser(user));
+    .then(() => this.successfullyAuthenticatedUser());
   }
 
   fetchUserInfo = () => {
     firebase.database().ref(`/users/${this.uid}`)
     .on('value', snapshot => {
       const user = snapshot.val();
-      console.log(`Fetched User: ${user}`);
       this.authenticationCallback(user);
     });
   }
 
-  successfullyAuthenticatedUser = (user) => {
+  successfullyAuthenticatedUser = () => {
     this.fetchUserInfo();
   }
 
@@ -119,7 +114,6 @@ class AuthService {
         user,
         timestamp: this.timestamp,
       };
-      console.log(`Message ${message}`);
       this.append(message);
     }
   };
