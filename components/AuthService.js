@@ -1,7 +1,7 @@
 import firebase from 'firebase';
 import firebaseConfig from '../private/FirebaseConfig';
 
-class Fire {
+class AuthService {
   constructor() {
     this.init();
     this.observeAuth();
@@ -11,19 +11,60 @@ class Fire {
     firebase.initializeApp(firebaseConfig);
   }
 
+  // **** NOTE: Won't be needed?
   observeAuth = () => {
     firebase.auth().onAuthStateChanged(this.onAuthStateChanged);
   }
 
   onAuthStateChanged = user => {
-    console.log(`Auth User: ${user}`);
-    if (!user) {
-      try {
-        firebase.auth().signInAnonymously();
-      } catch ({ message }) {
-        alert(`Authentication Error: ${message}`);
-      }
+    if (user) {
+      this.currentUser = firebase.auth();
+      console.log(`Auth User: ${this.currentUser}`);
     }
+  }
+  // ************************
+
+  loginUser = (email, password, authenticationCallback) => {
+    this.authenticationCallback = authenticationCallback;
+    firebase.auth().signInWithEmailAndPassword(email, password)
+      .then(user => this.successfullyLoggedInUser(user, authenticationCallback))
+      .catch((error) => {
+        console.log(error); // Catch and print any wonky errors as part of signup
+      });
+  }
+
+  createNewUser = (username, email, password, authenticationCallback) => {
+    this.authenticationCallback = authenticationCallback;
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+      .then(() => this.updateUserInfo({ email, username }))
+      .catch(error => alert(error));
+  }
+
+  updateUserInfo = ({ email, username }) => {
+    console.log(`Current User: ${this.currentUser}`);
+    firebase.database().ref(`/users/${this.uid}`)
+    .push({ email, username })
+    .then(() => {
+      alert('Login Success!');
+      // Store User
+      // this.currentUserInfo = { email, username };
+      // Push to Chat page
+      this.authenticationCallback();
+    });
+  }
+
+  fetchUserInfo = () => {
+    firebase.database().ref(`/users/${this.uid}`)
+    .on('value', snapshot => {
+      const user = snapshot.val();
+      console.log(`Fetched User: ${user}`);
+    });
+  }
+
+  successfullyLoggedInUser = (user) => {
+
+    // this.fetchUserInfo();
+    this.authenticationCallback();
   }
 
   get ref() {
@@ -94,5 +135,5 @@ class Fire {
   append = message => this.ref.push(message);
 }
 
-Fire.shared = new Fire();
-export default Fire;
+AuthService.shared = new AuthService();
+export default AuthService;

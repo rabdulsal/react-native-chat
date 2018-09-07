@@ -9,12 +9,14 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "eslint-config-rallycoding": "^3.2.0",
     "expo": "^29.0.0",
     "firebase": "^4.6.2",
     "react": "16.3.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-29.0.0.tar.gz",
     "react-native-gifted-chat": "^0.4.3",
-    "react-navigation": "^2.12.1"
+    "react-navigation": "^2.12.1",
+    "validator": "^10.7.1"
   }
 }

@@ -5,7 +5,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { GiftedChat } from 'react-native-gifted-chat';
-import Fire from './Fire';
+import AuthService from './AuthService';
 
 // console.disableYellowBox = true;
 
@@ -25,11 +25,11 @@ export default class Chat extends Component {
 
   /*
     1. When the component is added to the screen, start looking for messages.
-    Call the Fire.shared.on method and pass in a callback.
+    Call the AuthService.shared.on method and pass in a callback.
     We want our callback to get messages then add them to our current messages.
   */
   componentDidMount() {
-      Fire.shared.on(message =>
+      AuthService.shared.on(message =>
         this.setState(previousState => ({
           messages: GiftedChat.append(previousState.messages, message),
         }))
@@ -37,14 +37,14 @@ export default class Chat extends Component {
   }
   // 2. When the component leaves the screen, unsubscribe from the database.
   componentWillUnmount() {
-    Fire.shared.off();
+    AuthService.shared.off();
   }
 
   render() {
     return (
       <GiftedChat
         messages={this.state.messages}
-        onSend={Fire.shared.send}
+        onSend={AuthService.shared.send}
         user={this.user}
       />
     );
@@ -59,7 +59,7 @@ export default class Chat extends Component {
 
     return {
       name: this.props.navigation.state.params.name,
-      _id: Fire.shared.uid,
+      _id: AuthService.shared.uid,
     };
   }
 }

@@ -6,10 +6,14 @@ import {
   TextInput,
   TouchableOpacity
  } from 'react-native';
+ import SignUpForm from './SignUpForm';
+ import SignInForm from './SignInForm';
+
+console.disableYellowBox = true;
 
 export default class Main extends Component {
   static navigationOptions = {
-    title: 'Chatter',
+    title: 'Sign-Up/In',
   }
 
   state = {
@@ -18,27 +22,37 @@ export default class Main extends Component {
 
   onChangeText = name => this.setState({ name });
 
-  onPress = () => {
+  onSuccessfulAuthentication = () => {
     this.props.navigation.navigate('Chat', { name: this.state.name });
   }
 
   render() {
     return (
-      <View>
-        <Text style={styles.title}>Enter your name:</Text>
-        <TextInput
-          style={styles.nameInput}
-          placeHolder="Rashad Salaam"
-          value={this.state.name}
-          onChangeText={this.onChangeText}
+      <View style={{ flex: 1, backgroundColor: 'white' }}>
+        // 1. Render Sign In Form
+        <SignInForm
+          onSuccessfulAuthentication={this.onSuccessfulAuthentication}
         />
-
-        <TouchableOpacity
-          onPress={this.onPress}
-        >
-          <Text style={styles.buttonText}>Next</Text>
-        </TouchableOpacity>
+        // 2. Render Sign Un Form
+        <SignUpForm
+          onSuccessfulAuthentication={this.onSuccessfulAuthentication}
+        />
       </View>
+      // <View>
+      //   <Text style={styles.title}>Enter your name:</Text>
+      //   <TextInput
+      //     style={styles.nameInput}
+      //     placeHolder="Rashad Salaam"
+      //     value={this.state.name}
+      //     onChangeText={this.onChangeText}
+      //   />
+      //
+      //   <TouchableOpacity
+      //     onPress={this.onPress}
+      //   >
+      //     <Text style={styles.buttonText}>Next</Text>
+      //   </TouchableOpacity>
+      // </View>
     );
   }
 }
