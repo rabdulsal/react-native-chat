@@ -5,6 +5,7 @@ class AuthService {
   constructor() {
     this.init();
     this.observeAuth();
+    this.authenticationCallback = () => {};
   }
 
   init = () => {
@@ -17,14 +18,15 @@ class AuthService {
 
   onAuthStateChanged = (user) => {
     if (user) {
-      // Do something with user variable like mayber store it
+      // Do something with user variable like mayber store inspect
+      this.successfullyAuthenticatedUser();
     }
   }
 
   loginUser = (email, password, authenticationCallback) => {
     this.authenticationCallback = authenticationCallback;
     firebase.auth().signInWithEmailAndPassword(email, password)
-      .then(() => this.fetchUserInfo())
+      .then(() => this.successfullyAuthenticatedUser())
       .catch((error) => {
         console.log(error); // Catch and print any wonky errors as part of signup
       });
@@ -43,16 +45,22 @@ class AuthService {
     .then(() => this.successfullyAuthenticatedUser());
   }
 
-  fetchUserInfo = () => {
+  fetchUserInfo = (callback) => {
     firebase.database().ref(`/users/${this.uid}`)
     .on('value', snapshot => {
       const user = snapshot.val();
-      this.authenticationCallback(user);
+      this.currentUser = user;
+      console.log(`Current User: ${this.currentUser}`);
+      /* NOTE: Re-write this to provide a callback
+        that can be inspected by trigger-method
+      */
+      callback(user);
     });
   }
 
   successfullyAuthenticatedUser = () => {
-    this.fetchUserInfo();
+    this.fetchUserInfo(this.authenticationCallback);
+    // this.authenticationCallback(this.currentUser); NOTE: Trigger in callback
   }
 
   get messagesRef() {

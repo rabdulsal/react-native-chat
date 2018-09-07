@@ -14,7 +14,6 @@ export default class SignInForm extends Component {
     password: ''
   };
 
-
   onSuccessfulAuthentication = (user) => {
     this.props.onSuccessfulAuthentication(user);
   }
