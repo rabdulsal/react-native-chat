@@ -27,7 +27,7 @@ class AuthService {
   loginUser = (email, password, authenticationCallback) => {
     this.authenticationCallback = authenticationCallback;
     firebase.auth().signInWithEmailAndPassword(email, password)
-      .then(user => this.successfullyLoggedInUser(user, authenticationCallback))
+      .then(() => this.fetchUserInfo())
       .catch((error) => {
         console.log(error); // Catch and print any wonky errors as part of signup
       });
@@ -36,21 +36,15 @@ class AuthService {
   createNewUser = (username, email, password, authenticationCallback) => {
     this.authenticationCallback = authenticationCallback;
     firebase.auth().createUserWithEmailAndPassword(email, password)
-      .then(() => this.updateUserInfo({ email, username }))
+      .then(user => this.updateUserInfo({ email, username, user }))
       .catch(error => alert(error));
   }
 
-  updateUserInfo = ({ email, username }) => {
+  updateUserInfo = ({ email, username, user }) => {
     console.log(`Current User: ${this.currentUser}`);
     firebase.database().ref(`/users/${this.uid}`)
-    .push({ email, username })
-    .then(() => {
-      alert('Login Success!');
-      // Store User
-      // this.currentUserInfo = { email, username };
-      // Push to Chat page
-      this.authenticationCallback();
-    });
+    .set({ email, username })
+    .then(() => this.successfullyAuthenticatedUser(user));
   }
 
   fetchUserInfo = () => {
@@ -58,21 +52,20 @@ class AuthService {
     .on('value', snapshot => {
       const user = snapshot.val();
       console.log(`Fetched User: ${user}`);
+      this.authenticationCallback(user);
     });
   }
 
-  successfullyLoggedInUser = (user) => {
-
-    // this.fetchUserInfo();
-    this.authenticationCallback();
+  successfullyAuthenticatedUser = (user) => {
+    this.fetchUserInfo();
   }
 
-  get ref() {
+  get messagesRef() {
     return firebase.database().ref('messages');
   }
 
   on = callback =>
-    this.ref
+    this.messagesRef
       .limitToLast(20)
       .on('child_added', snapshot => callback(this.parse(snapshot)));
 
@@ -101,7 +94,7 @@ class AuthService {
   }
 
   off() {
-    this.ref.off();
+    this.messagesRef.off();
   }
 
   // Create a helper for getting the user’s uid
@@ -132,7 +125,7 @@ class AuthService {
   };
 
   // Function will save the message object with a unique ID
-  append = message => this.ref.push(message);
+  append = message => this.messagesRef.push(message);
 }
 
 AuthService.shared = new AuthService();

@@ -22,8 +22,8 @@ export default class Main extends Component {
 
   onChangeText = name => this.setState({ name });
 
-  onSuccessfulAuthentication = () => {
-    this.props.navigation.navigate('Chat', { name: this.state.name });
+  onSuccessfulAuthentication = (user) => {
+    this.props.navigation.navigate('Chat', { name: user.username });
   }
 
   render() {

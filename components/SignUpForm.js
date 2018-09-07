@@ -19,6 +19,10 @@ export default class SignUpForm extends Component {
     password: ''
   };
 
+  onSuccessfulAuthentication = (user) => {
+    this.props.onSuccessfulAuthentication(user);
+  }
+
   handleChangeEmail = email => this.setState({ email })
   handleChangeUsername = username => this.setState({ username });
   handleChangePassword = password => this.setState({ password });
@@ -26,7 +30,12 @@ export default class SignUpForm extends Component {
   handlePressedSignUpButton = () => {
     const { username, email, password } = this.state;
     if (Validator.isEmail(email) && username.trim() && password.trim()) {
-      AuthService.shared.createNewUser(username, email, password);
+      AuthService.shared.createNewUser(
+        username,
+        email,
+        password,
+        this.onSuccessfulAuthentication
+      );
     } else {
       alert('There was an error validating your Email, Username or Password');
     }

@@ -15,8 +15,8 @@ export default class SignInForm extends Component {
   };
 
 
-  onSuccessfulAuthentication = () => {
-    this.props.onSuccessfulAuthentication();
+  onSuccessfulAuthentication = (user) => {
+    this.props.onSuccessfulAuthentication(user);
   }
 
   handleChangeEmail = email => this.setState({ email })
