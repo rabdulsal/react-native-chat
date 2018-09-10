@@ -38,6 +38,7 @@ export const loginUser = ({ email, password }) => {
 };
 
 export const loginUserSuccess = (dispatch, user) => {
+  console.log(`LOGIN_USER_SUCCESS User: ${user}`);
   dispatch({
     type: LOGIN_USER_SUCCESS,
     payload: user

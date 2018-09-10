@@ -8,8 +8,16 @@ import { Input, Button } from './common';
 import { emailChanged, passwordChanged, loginUser } from '../actions';
 
 class SignInForm extends Component {
+  componentWillReceiveProps(nextProps) {
+    const { user } = nextProps;
+    if (user) {
+      console.log(`NextProps User: ${user}`);
+      this.props.onSuccessfulAuthentication(user);
+    }
+  }
 
-  onSuccessfulAuthentication = (user) => {
+  onSuccessfulAuthentication = (props) => {
+    const { user } = this.props;
     this.props.onSuccessfulAuthentication(user);
   }
 
@@ -73,12 +81,13 @@ const styles = {
 };
 
 const mapStateToProps = state => {
-  const { email, password, error, loading } = state.auth;
+  const { email, password, error, loading, user } = state.auth;
   return {
     email,
     password,
     error,
-    loading
+    loading,
+    user
   };
 };
 
