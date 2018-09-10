@@ -21,7 +21,7 @@ export default class Main extends Component {
   };
 
   componentDidMount() {
-    AuthService.shared.authenticationCallback = this.onSuccessfulAuthentication;
+    // AuthService.shared.authenticationCallback = this.onSuccessfulAuthentication;
   }
 
   onChangeText = name => this.setState({ name });

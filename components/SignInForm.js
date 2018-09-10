@@ -2,32 +2,29 @@ import React, { Component } from 'react';
 import {
   View,
   Text,
-  TouchableOpacity,
 } from 'react-native';
-import Validator from 'validator';
+import { connect } from 'react-redux';
 import { Input, Button } from './common';
-import AuthService from './AuthService';
+import { emailChanged, passwordChanged, loginUser } from '../actions';
 
-export default class SignInForm extends Component {
-  state = {
-    email: '',
-    password: ''
-  };
+class SignInForm extends Component {
 
   onSuccessfulAuthentication = (user) => {
     this.props.onSuccessfulAuthentication(user);
   }
 
-  handleChangeEmail = email => this.setState({ email })
-  handleChangePassword = password => this.setState({ password });
+  handleChangeEmail = email => this.props.emailChanged(email);
+  handleChangePassword = password => this.props.passwordChanged(password);
 
   handlePressedSignInButton = () => {
-    const { email, password } = this.state;
-    if (Validator.isEmail(email) && password.trim()) {
-      AuthService.shared.loginUser(email, password, this.onSuccessfulAuthentication);
-    } else {
-      alert('There was an error validating your Email, Username or Password');
-    }
+    const { email, password } = this.props;
+    // if (Validator.isEmail(email) && password.trim()) {
+    //   AuthService.shared.loginUser(email, password, this.onSuccessfulAuthentication);
+    // } else {
+    //   alert('There was an error validating your Email, Username or Password');
+    // }
+    console.log(`Email: ${email} Password: ${password}`);
+    this.props.loginUser({ email, password });
   }
 
   render() {
@@ -37,14 +34,15 @@ export default class SignInForm extends Component {
         <View style={styles.signInForm}>
           <Input
             placeholder="Email"
-            value={this.state.email}
+            value={this.props.email}
             onChangeText={this.handleChangeEmail}
           />
           <Input
             secureTextEntry
             placeholder="Password"
-            value={this.state.password}
-            onChangeText={this.handleChangePassword}
+            value={this.props.password}
+            onChangeText={this.handleChangePassword
+            }
           />
         </View>
         <Button
@@ -73,3 +71,19 @@ const styles = {
     justifyContent: 'space-around'
   }
 };
+
+const mapStateToProps = state => {
+  const { email, password, error, loading } = state.auth;
+  return {
+    email,
+    password,
+    error,
+    loading
+  };
+};
+
+export default connect(mapStateToProps, {
+  emailChanged,
+  passwordChanged,
+  loginUser
+})(SignInForm);

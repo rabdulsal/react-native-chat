@@ -19,17 +19,29 @@ class AuthService {
   onAuthStateChanged = (user) => {
     if (user) {
       // Do something with user variable like mayber store inspect
-      this.successfullyAuthenticatedUser();
+      // this.successfullyAuthenticatedUser();
     }
   }
 
-  loginUser = (email, password, authenticationCallback) => {
-    this.authenticationCallback = authenticationCallback;
-    firebase.auth().signInWithEmailAndPassword(email, password)
-      .then(() => this.successfullyAuthenticatedUser())
-      .catch((error) => {
-        console.log(error); // Catch and print any wonky errors as part of signup
-      });
+  loginUser = (email, password) => {
+    return new Promise((resolve, reject) => {
+      firebase.auth().signInWithEmailAndPassword(email, password)
+        .then(() => {
+          this.fetchUserInfo()
+          .then(user => {
+            console.log('Returning User from SignIn');
+            resolve(user);
+          })
+          .catch(error => {
+            console.log('Fetch User Error');
+            reject(error);
+          });
+        })
+        .catch((error) => {
+          console.log(`Firebase Error: ${error}`);
+          reject(error);
+        });
+    });
   }
 
   createNewUser = (username, email, password, authenticationCallback) => {
@@ -42,23 +54,29 @@ class AuthService {
   updateUserInfo = ({ email, username }) => {
     firebase.database().ref(`/users/${this.uid}`)
     .set({ email, username })
-    .then(() => this.successfullyAuthenticatedUser());
+    .then(() => this.successfullyAuthenticatedUser()); // TODO: Use FetchUser Promise
   }
 
-  fetchUserInfo = (callback) => {
-    firebase.database().ref(`/users/${this.uid}`)
-    .on('value', snapshot => {
-      const user = snapshot.val();
-      this.currentUser = user;
-      console.log(`Current User: ${this.currentUser}`);
-      /* NOTE: Re-write this to provide a callback
-        that can be inspected by trigger-method
-      */
-      callback(user);
+  fetchUserInfo = () => {
+    return new Promise((resolve, reject) => {
+      firebase.database().ref(`/users/${this.uid}`)
+      .on('value', snapshot => {
+        const user = snapshot.val();
+        this.currentUser = user;
+        console.log(`Fetched User: ${user}`);
+        /* NOTE: Re-write this to provide a callback
+          that can be inspected by trigger-method
+        */
+        resolve(user);
+        // TODO: Where to reject?
+      });
     });
   }
 
   successfullyAuthenticatedUser = () => {
+    return new Promise((resolve, reject) => {
+
+    });
     this.fetchUserInfo(this.authenticationCallback);
     // this.authenticationCallback(this.currentUser); NOTE: Trigger in callback
   }
