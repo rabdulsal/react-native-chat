@@ -42,21 +42,6 @@ export default class Main extends Component {
           onSuccessfulAuthentication={this.onSuccessfulAuthentication}
         />
     </ScrollView>
-      // <View>
-      //   <Text style={styles.title}>Enter your name:</Text>
-      //   <TextInput
-      //     style={styles.nameInput}
-      //     placeHolder="Rashad Salaam"
-      //     value={this.state.name}
-      //     onChangeText={this.onChangeText}
-      //   />
-      //
-      //   <TouchableOpacity
-      //     onPress={this.onPress}
-      //   >
-      //     <Text style={styles.buttonText}>Next</Text>
-      //   </TouchableOpacity>
-      // </View>
     );
   }
 }
