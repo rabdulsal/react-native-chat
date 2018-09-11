@@ -1,53 +1,92 @@
 import Validator from 'validator';
 import AuthService from '../components/AuthService';
 import {
-  EMAIL_CHANGED,
-  PASSWORD_CHANGED,
-  USERNAME_CHANGED,
+  SIGNIN_EMAIL_CHANGED,
+  SIGNIN_PASSWORD_CHANGED,
+  SIGNIN_USER_SUCCESS,
+  SIGNIN_USER_FAILED,
   LOGIN_USER,
-  LOGIN_USER_SUCCESS,
-  LOGIN_USER_FAILED
+  SIGNUP_USERNAME_CHANGED,
+  CREATE_USER,
+  SIGNUP_EMAIL_CHANGED,
+  SIGNUP_PASSWORD_CHANGED,
+  SIGNUP_USER_SUCCESS,
+  SIGNUP_USER_FAILED
 } from './types';
 
-export const emailChanged = text => {
+export const signinEmailChanged = text => {
   return {
-    type: EMAIL_CHANGED,
+    type: SIGNIN_EMAIL_CHANGED,
     payload: text
   };
 };
 
-export const passwordChanged = text => {
+export const signinPasswordChanged = text => {
   return {
-    type: PASSWORD_CHANGED,
+    type: SIGNIN_PASSWORD_CHANGED,
     payload: text
   };
 };
 
-export const loginUser = ({ email, password }) => {
+export const signupEmailChanged = text => {
+  return {
+    type: SIGNUP_EMAIL_CHANGED,
+    payload: text
+  };
+};
+
+export const signupPasswordChanged = text => {
+  return {
+    type: SIGNUP_PASSWORD_CHANGED,
+    payload: text
+  };
+};
+
+export const signupUsernameChanged = text => {
+  return {
+    type: SIGNUP_USERNAME_CHANGED,
+    payload: text
+  };
+};
+
+export const loginUser = ({ signinEmail, signinPassword }) => {
   return (dispatch) => {
     dispatch({ type: LOGIN_USER });
+    console.log(`[ACTIONS] Email: ${signinEmail} Password: ${signinPassword}`);
     // Validate & use AuthService stuff here
-    if (Validator.isEmail(email) && password.trim()) {
-      AuthService.shared.loginUser(email, password)
+    if (Validator.isEmail(signinEmail) && signinPassword.trim()) {
+      AuthService.shared.loginUser(signinEmail, signinPassword)
       .then(user => loginUserSuccess(dispatch, user))
-      .catch(error => console.log(`AuthActions Error ${error}`));
+      .catch(error => console.log(`AuthActions Login Error ${error}`));
     } else {
-      alert('There was an error validating your Email, Username or Password');
+      alert('There was an error validating your Email or Password');
+    }
+  };
+};
+
+export const createUser = ({ signupEmail, signupUsername, signupPassword }) => {
+  return (dispatch) => {
+    dispatch({ type: CREATE_USER });
+    if (Validator.isEmail(signupEmail) && signupUsername.trim() && signupPassword.trim()) {
+      AuthService.shared.createNewUser(signupEmail, signupUsername, signupPassword)
+      .then(user => loginUserSuccess(dispatch, user))
+      .catch(error => console.log(`AuthActions Create User Error: ${error}`));
+    } else {
+      alert('There was an error validating your Email, Username or Password')
     }
   };
 };
 
 export const loginUserSuccess = (dispatch, user) => {
-  console.log(`LOGIN_USER_SUCCESS User: ${user}`);
   dispatch({
-    type: LOGIN_USER_SUCCESS,
+    type: SIGNIN_USER_SUCCESS || SIGNUP_USER_SUCCESS,
     payload: user
   });
 };
 
-const loginUserFailed = dispatch => {
+const signinUserFailed = dispatch => {
   dispatch({
-    type: LOGIN_USER_FAILED
+    type: SIGNIN_USER_FAILED || SIGNUP_USER_FAILED
   });
 };
 

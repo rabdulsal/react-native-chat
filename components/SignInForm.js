@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import { Input, Button, Spinner } from './common';
-import { emailChanged, passwordChanged, loginUser } from '../actions';
+import { signinEmailChanged, signinPasswordChanged, loginUser } from '../actions';
 
 class SignInForm extends Component {
   componentWillReceiveProps(nextProps) {
@@ -19,12 +19,13 @@ class SignInForm extends Component {
 
   }
 
-  handleChangeEmail = email => this.props.emailChanged(email);
-  handleChangePassword = password => this.props.passwordChanged(password);
+  handleChangeEmail = signinEmail => this.props.signinEmailChanged(signinEmail);
+  handleChangePassword = signinPassword => this.props.signinPasswordChanged(signinPassword);
 
   handlePressedSignInButton = () => {
-    const { email, password } = this.props;
-    this.props.loginUser({ email, password });
+    const { signinEmail, signinPassword } = this.props;
+    console.log(`Email: ${signinEmail} Password: ${signinPassword}`);
+    this.props.loginUser({ signinEmail, signinPassword });
   }
 
   render() {
@@ -38,13 +39,13 @@ class SignInForm extends Component {
         <View style={styles.signInForm}>
           <Input
             placeholder="Email"
-            value={this.props.email}
+            value={this.props.signinEmail}
             onChangeText={this.handleChangeEmail}
           />
           <Input
             secureTextEntry
             placeholder="Password"
-            value={this.props.password}
+            value={this.props.signinPassword}
             onChangeText={this.handleChangePassword
             }
           />
@@ -78,10 +79,10 @@ const styles = {
 };
 
 const mapStateToProps = state => {
-  const { email, password, error, loading, user } = state.auth;
+  const { signinEmail, signinPassword, error, loading, user } = state.auth;
   return {
-    email,
-    password,
+    signinEmail,
+    signinPassword,
     error,
     loading,
     user
@@ -89,7 +90,7 @@ const mapStateToProps = state => {
 };
 
 export default connect(mapStateToProps, {
-  emailChanged,
-  passwordChanged,
+  signinEmailChanged,
+  signinPasswordChanged,
   loginUser
 })(SignInForm);

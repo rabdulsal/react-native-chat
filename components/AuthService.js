@@ -34,14 +34,12 @@ class AuthService {
     });
   }
 
-  createNewUser = (username, email, password) => {
+  createNewUser = (email, username, password) => {
     return new Promise((resolve, reject) => {
       firebase.auth().createUserWithEmailAndPassword(email, password)
-        .then(() => {
-          this.updateUserInfo({ email, username })
+        .then(() => this.updateUserInfo({ email, username })
           .then(user => resolve(user))
-          .catch(error => reject(error));
-        })
+          .catch(error => reject(error)))
         .catch(error => reject(error));
     });
   }
@@ -50,7 +48,9 @@ class AuthService {
     return new Promise((resolve, reject) => {
       firebase.database().ref(`/users/${this.uid}`)
       .set({ email, username })
-      .then(user => resolve(user))
+      .then(() => this.fetchUserInfo()
+        .then(user => resolve(user))
+        .catch(error => reject(error)))
       .catch(error => reject(error));
     });
   }

@@ -7,7 +7,6 @@ import {
  } from 'react-native';
  import SignUpForm from './SignUpForm';
  import SignInForm from './SignInForm';
- import AuthService from './AuthService';
 
 console.disableYellowBox = true;
 
@@ -42,7 +41,6 @@ export default class Main extends Component {
   }
 }
 
-const offset = 24;
 const styles = StyleSheet.create({
   container: {
     flex: 1,

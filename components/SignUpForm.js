@@ -4,41 +4,35 @@ import React, { Component } from 'react';
 import {
   View,
   Text,
-  TouchableOpacity,
 } from 'react-native';
-import Validator from 'validator';
-import axios from 'axios';
-import firebase from 'firebase';
+import { connect } from 'react-redux';
 import { Input, Button } from './common';
-import AuthService from './AuthService';
+import {
+  signupEmailChanged,
+  signupUsernameChanged,
+  signupPasswordChanged,
+  createUser
+} from '../actions';
 
-export default class SignUpForm extends Component {
-  state = {
-    email: '',
-    username: '',
-    password: ''
-  };
+class SignUpForm extends Component {
+  componentWillReceiveProps(nextProps) {
+    const { user } = nextProps;
+    if (user) {
+      this.props.onSuccessfulAuthentication(user);
+    }
+  }
 
   onSuccessfulAuthentication = (user) => {
     this.props.onSuccessfulAuthentication(user);
   }
 
-  handleChangeEmail = email => this.setState({ email })
-  handleChangeUsername = username => this.setState({ username });
-  handleChangePassword = password => this.setState({ password });
+  handleChangeEmail = signupEmail => this.props.signupEmailChanged(signupEmail);
+  handleChangeUsername = signupUsername => this.props.signupUsernameChanged(signupUsername);
+  handleChangePassword = signupPassword => this.props.signupPasswordChanged(signupPassword);
 
   handlePressedSignUpButton = () => {
-    const { username, email, password } = this.state;
-    if (Validator.isEmail(email) && username.trim() && password.trim()) {
-      AuthService.shared.createNewUser(
-        username,
-        email,
-        password,
-        this.onSuccessfulAuthentication
-      );
-    } else {
-      alert('There was an error validating your Email, Username or Password');
-    }
+    const { signupUsername, signupEmail, signupPassword } = this.props;
+    this.props.createUser({ signupEmail, signupUsername, signupPassword });
   }
 
   render() {
@@ -48,18 +42,18 @@ export default class SignUpForm extends Component {
         <View style={styles.signUpForm}>
           <Input
             placeholder="Email"
-            value={this.state.email}
+            value={this.props.signupEmail}
             onChangeText={this.handleChangeEmail}
           />
           <Input
             placeholder="Username"
-            value={this.state.username}
+            value={this.props.signupUsername}
             onChangeText={this.handleChangeUsername}
           />
           <Input
             secureTextEntry
             placeholder="Password"
-            value={this.state.password}
+            value={this.props.signupPassword}
             onChangeText={this.handleChangePassword}
           />
         </View>
@@ -87,3 +81,22 @@ const styles = {
     justifyContent: 'space-around'
   }
 };
+
+const mapStateToProps = state => {
+  const { signupEmail, signupPassword, error, loading, user, signupUsername } = state.auth;
+  return {
+    signupEmail,
+    signupPassword,
+    error,
+    loading,
+    user,
+    signupUsername
+  };
+};
+
+export default connect(mapStateToProps, {
+  signupEmailChanged,
+  signupPasswordChanged,
+  signupUsernameChanged,
+  createUser
+})(SignUpForm);
