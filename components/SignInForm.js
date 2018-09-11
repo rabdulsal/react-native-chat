@@ -4,21 +4,19 @@ import {
   Text,
 } from 'react-native';
 import { connect } from 'react-redux';
-import { Input, Button } from './common';
+import { Input, Button, Spinner } from './common';
 import { emailChanged, passwordChanged, loginUser } from '../actions';
 
 class SignInForm extends Component {
   componentWillReceiveProps(nextProps) {
     const { user } = nextProps;
     if (user) {
-      console.log(`NextProps User: ${user}`);
       this.props.onSuccessfulAuthentication(user);
     }
   }
 
-  onSuccessfulAuthentication = (props) => {
-    const { user } = this.props;
-    this.props.onSuccessfulAuthentication(user);
+  componentWillUnmount() {
+
   }
 
   handleChangeEmail = email => this.props.emailChanged(email);
@@ -26,16 +24,14 @@ class SignInForm extends Component {
 
   handlePressedSignInButton = () => {
     const { email, password } = this.props;
-    // if (Validator.isEmail(email) && password.trim()) {
-    //   AuthService.shared.loginUser(email, password, this.onSuccessfulAuthentication);
-    // } else {
-    //   alert('There was an error validating your Email, Username or Password');
-    // }
-    console.log(`Email: ${email} Password: ${password}`);
     this.props.loginUser({ email, password });
   }
 
   render() {
+    if (this.props.loading) {
+      return <Spinner size="large" />;
+    }
+
     return (
       <View style={styles.container}>
         <Text style={styles.signInText}>Sign In!</Text>
@@ -53,6 +49,7 @@ class SignInForm extends Component {
             }
           />
         </View>
+
         <Button
           onPress={this.handlePressedSignInButton}
         >

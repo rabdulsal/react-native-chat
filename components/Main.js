@@ -20,10 +20,6 @@ export default class Main extends Component {
     name: ''
   };
 
-  componentDidMount() {
-    // AuthService.shared.authenticationCallback = this.onSuccessfulAuthentication;
-  }
-
   onChangeText = name => this.setState({ name });
 
   onSuccessfulAuthentication = (user) => {
@@ -33,15 +29,15 @@ export default class Main extends Component {
   render() {
     return (
       <ScrollView style={styles.container}>
-        // 1. Render Sign In Form
+        { /* 1. Render Sign In Form */ }
         <SignInForm
           onSuccessfulAuthentication={this.onSuccessfulAuthentication}
         />
-        // 2. Render Sign Un Form
+        { /* 2. Render Sign Un Form */ }
         <SignUpForm
           onSuccessfulAuthentication={this.onSuccessfulAuthentication}
         />
-    </ScrollView>
+      </ScrollView>
     );
   }
 }
