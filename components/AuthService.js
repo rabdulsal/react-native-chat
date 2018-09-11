@@ -16,9 +16,19 @@ class AuthService {
   }
 
   onAuthStateChanged = (user) => {
+    // Inspect user data
+    // user.providerData.forEach(profile => {
+    //   console.log(`Sign-in provider: ${profile.providerId}`);
+    //   console.log(`Provider-specific UID: ${profile.uid}`);
+    //   console.log(`Name: ${profile.displayName}`);
+    //   console.log(`Email: ${profile.email}`);
+    //   console.log(`Photo URL: ${profile.photoURL}`);
+    // });
     if (user) {
       // Do something with user variable like mayber store inspect
       // this.successfullyAuthenticatedUser();
+    } else {
+      console.log('No User');
     }
   }
 
@@ -131,6 +141,12 @@ class AuthService {
 
   // Function will save the message object with a unique ID
   append = message => this.messagesRef.push(message);
+
+  signOut = () => {
+    firebase.auth().signOut()
+    .then(() => {})
+    .catch(error => console.log(`Signout Error: ${error}`));
+  }
 }
 
 AuthService.shared = new AuthService();
