@@ -1,3 +1,5 @@
+export const SIGNOUT = 'signout';
+
 // SIGNIN
 export const SIGNIN_EMAIL_CHANGED = 'signin_email_changed';
 export const SIGNIN_PASSWORD_CHANGED = 'signin_password_changed';

@@ -10,13 +10,10 @@ import { signinEmailChanged, signinPasswordChanged, loginUser } from '../actions
 class SignInForm extends Component {
   componentWillReceiveProps(nextProps) {
     const { user } = nextProps;
+
     if (user) {
       this.props.onSuccessfulAuthentication(user);
     }
-  }
-
-  componentWillUnmount() {
-
   }
 
   handleChangeEmail = signinEmail => this.props.signinEmailChanged(signinEmail);
@@ -24,13 +21,12 @@ class SignInForm extends Component {
 
   handlePressedSignInButton = () => {
     const { signinEmail, signinPassword } = this.props;
-    console.log(`Email: ${signinEmail} Password: ${signinPassword}`);
     this.props.loginUser({ signinEmail, signinPassword });
   }
 
   render() {
-    if (this.props.loading) {
-      return <Spinner size="large" />;
+    if (this.props.signinError) {
+      alert(this.props.signinError);
     }
 
     return (
@@ -79,11 +75,11 @@ const styles = {
 };
 
 const mapStateToProps = state => {
-  const { signinEmail, signinPassword, error, loading, user } = state.auth;
+  const { signinEmail, signinPassword, signinError, loading, user } = state.auth;
   return {
     signinEmail,
     signinPassword,
-    error,
+    signinError,
     loading,
     user
   };

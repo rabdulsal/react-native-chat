@@ -10,6 +10,7 @@ import {
   SIGNUP_PASSWORD_CHANGED,
   SIGNUP_USER_SUCCESS,
   SIGNUP_USER_FAILED,
+  SIGNOUT,
  } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -19,47 +20,52 @@ const INITIAL_STATE = {
   signupPassword: '',
   user: null,
   signupUsername: '',
-  error: '',
+  ERROR_RESET,
   loading: false
+};
+
+const ERROR_RESET = {
+  signinError: '',
+  signupError: '',
 };
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
+    case SIGNOUT:
+      return { ...INITIAL_STATE };
     // SIGNIN
     case SIGNIN_EMAIL_CHANGED:
-      return { ...state, signinEmail: action.payload };
+      return { ...state, ...ERROR_RESET, signinEmail: action.payload };
     case SIGNIN_PASSWORD_CHANGED:
-      return { ...state, signinPassword: action.payload };
+      return { ...state, ...ERROR_RESET, signinPassword: action.payload };
     case LOGIN_USER:
-      return { ...state, loading: true, error: '' };
+      return { ...state, loading: true, ...ERROR_RESET };
     case SIGNIN_USER_SUCCESS:
       return { ...state, ...INITIAL_STATE, user: action.payload };
     case SIGNIN_USER_FAILED:
       return {
         ...state,
-        loading: false,
-        error: 'Login Failed!',
-        password: '',
+        ...INITIAL_STATE,
+        signinError: action.payload,
       };
 
     // SIGNUP
     case SIGNUP_EMAIL_CHANGED:
-      return { ...state, signupEmail: action.payload };
+      return { ...state, ...ERROR_RESET, signupEmail: action.payload };
     case SIGNUP_PASSWORD_CHANGED:
-      return { ...state, signupPassword: action.payload };
+      return { ...state, ...ERROR_RESET, signupPassword: action.payload };
     case SIGNUP_USER_SUCCESS:
       return { ...state, ...INITIAL_STATE, user: action.payload };
     case SIGNUP_USER_FAILED:
       return {
         ...state,
-        loading: false,
-        error: 'Create User Failed!',
-        password: '',
+        ...INITIAL_STATE,
+        signupError: action.payload,
       };
     case CREATE_USER:
-      return { ...state, loading: true, error: '' };
+      return { ...state, loading: true, ...ERROR_RESET };
     case SIGNUP_USERNAME_CHANGED:
-      return { ...state, signupUsername: action.payload };
+      return { ...state, ...ERROR_RESET, signupUsername: action.payload };
     default: return state;
   }
 };

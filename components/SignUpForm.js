@@ -36,6 +36,10 @@ class SignUpForm extends Component {
   }
 
   render() {
+    if (this.props.signupError) {
+      alert(this.props.signupError);
+    }
+
     return (
       <View style={styles.container}>
       <Text style={styles.signUpText}>Sign Up!</Text>
@@ -83,11 +87,11 @@ const styles = {
 };
 
 const mapStateToProps = state => {
-  const { signupEmail, signupPassword, error, loading, user, signupUsername } = state.auth;
+  const { signupEmail, signupPassword, signupError, loading, user, signupUsername } = state.auth;
   return {
     signupEmail,
     signupPassword,
-    error,
+    signupError,
     loading,
     user,
     signupUsername

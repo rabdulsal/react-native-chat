@@ -11,7 +11,8 @@ import {
   SIGNUP_EMAIL_CHANGED,
   SIGNUP_PASSWORD_CHANGED,
   SIGNUP_USER_SUCCESS,
-  SIGNUP_USER_FAILED
+  SIGNUP_USER_FAILED,
+  SIGNOUT,
 } from './types';
 
 export const signinEmailChanged = text => {
@@ -49,6 +50,13 @@ export const signupUsernameChanged = text => {
   };
 };
 
+export const signout = () => {
+  return (dispatch) => {
+    AuthService.shared.signout();
+    dispatch({ type: SIGNOUT });
+  };
+};
+
 export const loginUser = ({ signinEmail, signinPassword }) => {
   return (dispatch) => {
     dispatch({ type: LOGIN_USER });
@@ -57,7 +65,7 @@ export const loginUser = ({ signinEmail, signinPassword }) => {
     if (Validator.isEmail(signinEmail) && signinPassword.trim()) {
       AuthService.shared.loginUser(signinEmail, signinPassword)
       .then(user => loginUserSuccess(dispatch, user))
-      .catch(error => console.log(`AuthActions Login Error ${error}`));
+      .catch(error => signinUserFailed(dispatch, error));
     } else {
       alert('There was an error validating your Email or Password');
     }
@@ -70,7 +78,7 @@ export const createUser = ({ signupEmail, signupUsername, signupPassword }) => {
     if (Validator.isEmail(signupEmail) && signupUsername.trim() && signupPassword.trim()) {
       AuthService.shared.createNewUser(signupEmail, signupUsername, signupPassword)
       .then(user => loginUserSuccess(dispatch, user))
-      .catch(error => console.log(`AuthActions Create User Error: ${error}`));
+      .catch(error => signinUserFailed(dispatch, error));
     } else {
       alert('There was an error validating your Email, Username or Password')
     }
@@ -84,10 +92,9 @@ export const loginUserSuccess = (dispatch, user) => {
   });
 };
 
-const signinUserFailed = dispatch => {
+const signinUserFailed = (dispatch, error) => {
   dispatch({
-    type: SIGNIN_USER_FAILED || SIGNUP_USER_FAILED
+    type: SIGNIN_USER_FAILED || SIGNUP_USER_FAILED,
+    payload: error
   });
 };
-
-// TODO: USERNAME_CHANGED Action here

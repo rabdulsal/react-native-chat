@@ -7,7 +7,9 @@ import {
 } from 'react-native';
 import { Button } from 'react-native-elements';
 import { GiftedChat } from 'react-native-gifted-chat';
+import { connect } from 'react-redux';
 import AuthService from './AuthService';
+import { signout } from '../actions';
 
 // console.disableYellowBox = true;
 
@@ -15,18 +17,18 @@ type Props = {
   name?: string,
 }
 
-export default class Chat extends Component {
+class Chat extends Component {
 
   static navigationOptions = ({ navigation }) => {
     const { params } = navigation.state;
 
     return {
-      title: (navigation.state.params || {}).name || 'Chat!',
+      title: (params || {}).name || 'Chat!',
       headerLeft: null, // NOTE: Must clear stack for Android
       headerRight: (
         <Button
           title="Logout"
-          onPress={() => params.logOut && params.logOut()}
+          onPress={() => params.signout && params.signout()}
           backgroundColor='rgba(0,0,0,0)'
           color='rgba(0, 122, 255, 1)'
         />
@@ -52,7 +54,7 @@ export default class Chat extends Component {
           messages: GiftedChat.append(previousState.messages, message),
         }))
       );
-      this.props.navigation.setParams({ logOut: () => this.onLogoutPress() });
+      this.props.navigation.setParams({ signout: () => this.onSignoutPress() });
   }
   // 2. When the component leaves the screen, unsubscribe from the database.
   componentWillUnmount() {
@@ -82,9 +84,9 @@ export default class Chat extends Component {
     };
   }
 
-  onLogoutPress = () => {
+  onSignoutPress = () => {
     console.log('Logout Pressed!');
-    AuthService.shared.signOut();
+    this.props.signout();
     this.props.navigation.navigate('Main');
   }
 }
@@ -94,3 +96,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+
+const mapStateToProps = state => {
+  const { user } = state.auth;
+  return user;
+};
+
+export default connect(mapStateToProps, { signout })(Chat);

@@ -54,6 +54,12 @@ class AuthService {
     });
   }
 
+  signout = () => {
+    firebase.auth().signOut()
+    .then()
+    .catch(error => console.log(`Signout Error: ${error}`));
+  }
+
   updateUserInfo = ({ email, username }) => {
     return new Promise((resolve, reject) => {
       firebase.database().ref(`/users/${this.uid}`)
@@ -141,12 +147,6 @@ class AuthService {
 
   // Function will save the message object with a unique ID
   append = message => this.messagesRef.push(message);
-
-  signOut = () => {
-    firebase.auth().signOut()
-    .then(() => {})
-    .catch(error => console.log(`Signout Error: ${error}`));
-  }
 }
 
 AuthService.shared = new AuthService();
