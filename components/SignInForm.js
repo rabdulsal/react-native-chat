@@ -24,6 +24,23 @@ class SignInForm extends Component {
     this.props.loginUser({ signinEmail, signinPassword });
   }
 
+  renderSignInButton = () => {
+    if (this.props.signinIsLoading) {
+      return (
+        <Button disabled>
+          <Spinner size="large" />
+        </Button>
+      );
+    }
+    return (
+      <Button
+        onPress={this.handlePressedSignInButton}
+      >
+        Login!
+      </Button>
+    );
+  }
+
   render() {
     if (this.props.signinError) {
       alert(this.props.signinError);
@@ -46,12 +63,7 @@ class SignInForm extends Component {
             }
           />
         </View>
-
-        <Button
-          onPress={this.handlePressedSignInButton}
-        >
-          Login!
-        </Button>
+        {this.renderSignInButton()};
       </View>
     );
   }
@@ -69,18 +81,25 @@ const styles = {
     marginTop: 20
   },
   signInForm: {
-    height: 225,
+    height: 140,
     justifyContent: 'space-around'
   }
 };
 
 const mapStateToProps = state => {
-  const { signinEmail, signinPassword, signinError, loading, user } = state.auth;
+  const {
+    signinEmail,
+    signinPassword,
+    signinError,
+    signinIsLoading,
+    user
+  } = state.auth;
+
   return {
     signinEmail,
     signinPassword,
     signinError,
-    loading,
+    signinIsLoading,
     user
   };
 };

@@ -6,7 +6,7 @@ import {
   Text,
 } from 'react-native';
 import { connect } from 'react-redux';
-import { Input, Button } from './common';
+import { Input, Button, Spinner } from './common';
 import {
   signupEmailChanged,
   signupUsernameChanged,
@@ -35,6 +35,23 @@ class SignUpForm extends Component {
     this.props.createUser({ signupEmail, signupUsername, signupPassword });
   }
 
+  renderSignUpButton = () => {
+    if (this.props.signupIsLoading) {
+      return (
+        <Button disabled>
+          <Spinner size="large" />
+        </Button>
+      );
+    }
+    return (
+      <Button
+        onPress={this.handlePressedSignUpButton}
+      >
+        Create Account!
+      </Button>
+    );
+  }
+
   render() {
     if (this.props.signupError) {
       alert(this.props.signupError);
@@ -61,9 +78,7 @@ class SignUpForm extends Component {
             onChangeText={this.handleChangePassword}
           />
         </View>
-        <Button onPress={this.handlePressedSignUpButton}>
-          Create Account!
-        </Button>
+          {this.renderSignUpButton()}
       </View>
     );
   }
@@ -81,18 +96,26 @@ const styles = {
     marginTop: 20
   },
   signUpForm: {
-    height: 225,
+    height: 200,
     justifyContent: 'space-around'
   }
 };
 
 const mapStateToProps = state => {
-  const { signupEmail, signupPassword, signupError, loading, user, signupUsername } = state.auth;
+  const {
+    signupEmail,
+    signupPassword,
+    signupError,
+    signupIsLoading,
+    user,
+    signupUsername
+  } = state.auth;
+  
   return {
     signupEmail,
     signupPassword,
     signupError,
-    loading,
+    signupIsLoading,
     user,
     signupUsername
   };

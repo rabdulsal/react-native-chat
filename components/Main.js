@@ -15,10 +15,6 @@ export default class Main extends Component {
     title: 'Sign-Up/In',
   }
 
-  state = {
-    name: ''
-  };
-
   onChangeText = name => this.setState({ name });
 
   onSuccessfulAuthentication = (user) => {
@@ -28,11 +24,9 @@ export default class Main extends Component {
   render() {
     return (
       <ScrollView style={styles.container}>
-        { /* 1. Render Sign In Form */ }
         <SignInForm
           onSuccessfulAuthentication={this.onSuccessfulAuthentication}
         />
-        { /* 2. Render Sign Un Form */ }
         <SignUpForm
           onSuccessfulAuthentication={this.onSuccessfulAuthentication}
         />

@@ -60,14 +60,14 @@ export const signout = () => {
 export const loginUser = ({ signinEmail, signinPassword }) => {
   return (dispatch) => {
     dispatch({ type: LOGIN_USER });
-    console.log(`[ACTIONS] Email: ${signinEmail} Password: ${signinPassword}`);
     // Validate & use AuthService stuff here
     if (Validator.isEmail(signinEmail) && signinPassword.trim()) {
       AuthService.shared.loginUser(signinEmail, signinPassword)
       .then(user => loginUserSuccess(dispatch, user))
       .catch(error => signinUserFailed(dispatch, error));
     } else {
-      alert('There was an error validating your Email or Password');
+      const ERROR_MESSAGE = 'There was an error validating your Email or Password';
+      signinUserFailed(dispatch, ERROR_MESSAGE);
     }
   };
 };
@@ -80,7 +80,8 @@ export const createUser = ({ signupEmail, signupUsername, signupPassword }) => {
       .then(user => loginUserSuccess(dispatch, user))
       .catch(error => signinUserFailed(dispatch, error));
     } else {
-      alert('There was an error validating your Email, Username or Password')
+      const ERROR_MESSAGE = 'There was an error validating your Email, Username or Password';
+      signinUserFailed(dispatch, ERROR_MESSAGE);
     }
   };
 };

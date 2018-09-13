@@ -21,7 +21,8 @@ const INITIAL_STATE = {
   user: null,
   signupUsername: '',
   ERROR_RESET,
-  loading: false
+  signinIsLoading: false,
+  signupIsLoading: false
 };
 
 const ERROR_RESET = {
@@ -39,7 +40,7 @@ export default (state = INITIAL_STATE, action) => {
     case SIGNIN_PASSWORD_CHANGED:
       return { ...state, ...ERROR_RESET, signinPassword: action.payload };
     case LOGIN_USER:
-      return { ...state, loading: true, ...ERROR_RESET };
+      return { ...state, signinIsLoading: true, ...ERROR_RESET };
     case SIGNIN_USER_SUCCESS:
       return { ...state, ...INITIAL_STATE, user: action.payload };
     case SIGNIN_USER_FAILED:
@@ -63,7 +64,7 @@ export default (state = INITIAL_STATE, action) => {
         signupError: action.payload,
       };
     case CREATE_USER:
-      return { ...state, loading: true, ...ERROR_RESET };
+      return { ...state, signupIsLoading: true, ...ERROR_RESET };
     case SIGNUP_USERNAME_CHANGED:
       return { ...state, ...ERROR_RESET, signupUsername: action.payload };
     default: return state;
