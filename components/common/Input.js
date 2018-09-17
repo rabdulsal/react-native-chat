@@ -47,7 +47,7 @@ const styles = {
   // }
   textInput: {
     width: 0.9 * width,
-    height: 0.08 * height,
+    height: 50,
     backgroundColor: 'rgb(242,242,242)',
     borderRadius: 30,
     paddingLeft: '3%',

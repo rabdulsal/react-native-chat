@@ -5,6 +5,7 @@ class AuthService {
   constructor() {
     this.init();
     this.observeAuth();
+    this.currentUser = {};
   }
 
   init = () => {
@@ -27,6 +28,12 @@ class AuthService {
     if (user) {
       // Do something with user variable like mayber store inspect
       // this.successfullyAuthenticatedUser();
+      this.fetchUserInfo()
+      .then(usr => {
+        this.currentUser = usr;
+        console.log(`Auth state currentUser: ${this.currentUser}`);
+      })
+      .catch(error => console.log(`Auth state user fetch error: ${error}`));
     } else {
       console.log('No User');
     }

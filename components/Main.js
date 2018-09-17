@@ -7,12 +7,20 @@ import {
  } from 'react-native';
  import SignUpForm from './SignUpForm';
  import SignInForm from './SignInForm';
+ import { Spinner } from './common';
+ import AuthService from './AuthService';
 
 console.disableYellowBox = true;
 
 export default class Main extends Component {
   static navigationOptions = {
     title: 'Sign-Up/In',
+  }
+
+  componentWillMount() {
+    // if (AuthService.shared.currentUser) {
+    //   this.onSuccessfulAuthentication(AuthService.shared.currentUser);
+    // }
   }
 
   onChangeText = name => this.setState({ name });

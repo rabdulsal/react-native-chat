@@ -10,6 +10,7 @@ import { GiftedChat } from 'react-native-gifted-chat';
 import { connect } from 'react-redux';
 import AuthService from './AuthService';
 import { signout } from '../actions';
+import CustomActions from './CustomActions';
 
 // console.disableYellowBox = true;
 
@@ -21,6 +22,7 @@ class Chat extends Component {
 
   static navigationOptions = ({ navigation }) => {
     const { params } = navigation.state;
+
 
     return {
       title: (params || {}).name || 'Chat!',
@@ -49,10 +51,8 @@ class Chat extends Component {
     We want our callback to get messages then add them to our current messages.
   */
   componentDidMount() {
-      AuthService.shared.on(message =>
-        this.setState(previousState => ({
-          messages: GiftedChat.append(previousState.messages, message),
-        }))
+      AuthService.shared.on(messages =>
+        this.updateMessagesState(messages)
       );
       this.props.navigation.setParams({ signout: () => this.onSignoutPress() });
   }
@@ -61,12 +61,29 @@ class Chat extends Component {
     AuthService.shared.off();
   }
 
+  renderCustomActions = (props) => {
+    return (
+      <CustomActions {...props} />
+    );
+  }
+
+  updateMessagesState = (messages = []) => {
+    this.setState(previousState => ({
+      messages: GiftedChat.append(previousState.messages, messages),
+    }));
+  }
+  testImageSend = (messages = []) => {
+    this.updateMessagesState(messages);
+  }
+
   render() {
     return (
+      // NOTE: Must update 'onSend' to 'AuthService.shared.send'
       <GiftedChat
         messages={this.state.messages}
-        onSend={AuthService.shared.send}
+        onSend={this.testImageSend}
         user={this.user}
+        renderActions={this.renderCustomActions}
       />
     );
   }
