@@ -6,6 +6,7 @@ import ReduxThunk from 'redux-thunk';
 import reducers from './reducers';
 import Main from './components/Main';
 import Chat from './components/Chat';
+import AuthService from './components/AuthService';
 
 export default class App extends Component {
   render() {
@@ -13,6 +14,8 @@ export default class App extends Component {
       Main: { screen: Main },
       Chat: { screen: Chat },
     });
+
+    AuthService.shared.observeAuth();
 
     const store = createStore(reducers, {}, applyMiddleware(ReduxThunk));
 

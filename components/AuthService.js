@@ -1,11 +1,16 @@
+import React, { Component } from 'react';
 import firebase from 'firebase';
+import { connect } from 'react-redux';
 import firebaseConfig from '../private/FirebaseConfig';
+import { loginUserSuccess, userNotAuthenticated } from '../actions/types';
 
-class AuthService {
-  constructor() {
+class AuthService extends React.Component {
+  constructor(props) {
+    super(props);
     this.init();
-    this.observeAuth();
-    this.currentUser = {};
+    console.log('Init new AuthService');
+    // this.observeAuth();
+    this.currentUser = null;
   }
 
   init = () => {
@@ -13,7 +18,7 @@ class AuthService {
   }
 
   observeAuth = () => {
-    firebase.auth().onAuthStateChanged(this.onAuthStateChanged);
+    // firebase.auth().onAuthStateChanged(this.onAuthStateChanged);
   }
 
   onAuthStateChanged = (user) => {
@@ -25,18 +30,60 @@ class AuthService {
     //   console.log(`Email: ${profile.email}`);
     //   console.log(`Photo URL: ${profile.photoURL}`);
     // });
-    if (user) {
-      // Do something with user variable like mayber store inspect
-      // this.successfullyAuthenticatedUser();
-      this.fetchUserInfo()
-      .then(usr => {
-        this.currentUser = usr;
-        console.log(`Auth state currentUser: ${this.currentUser}`);
-      })
-      .catch(error => console.log(`Auth state user fetch error: ${error}`));
-    } else {
-      console.log('No User');
-    }
+    // return new Promise((resolve, reject) => {
+      if (user) {
+        // Do something with user variable like mayber store inspect
+        // this.successfullyAuthenticatedUser();
+        this.props.loginUserSuccess(user);
+        console.log('Login Success Run');
+          // this.fetchUserInfo()
+          // .then(usr => {
+          //   this.currentUser = usr;
+          //   console.log(`AuthState Current User: ${this.currentUser}`);
+          //   this.props.loginUserSuccess(usr).bind(this);
+          //   // return (dispatch) => {
+          //   //   dispatch({
+          //   //     type: SIGNIN_USER_SUCCESS,
+          //   //     payload: usr,
+          //   //   });
+          //   // };
+          // })
+          // .catch(error => console.log(`Auth state user fetch error: ${error}`));
+      } else {
+        this.props.userNotAuthenticated().bind(this);
+        // return (dispatch) => {
+        //   dispatch({
+        //     type: USER_NOT_AUTHENTICATED,
+        //   });
+        // };
+      }
+    //   resolve(null);
+    // });
+  }
+
+  checkAuthenticationGetUser = () => {
+    // return new Promise((resolve, reject) => {
+    //   firebase.auth().onAuthStateChanged(this.onAuthStateChanged)
+    //   .then(user => resolve(user))
+    //   .catch(error => reject(error));
+    // });
+    return new Promise((resolve, reject) => {
+      if (this.currentUser) {
+        console.log('Firebase Current User');
+        resolve(this.currentUser);
+        // Do something with user variable like mayber store inspect
+        // this.successfullyAuthenticatedUser();
+          // this.fetchUserInfo()
+          // .then(usr => {
+          //   this.currentUser = usr;
+          //   console.log(`Current User: ${this.currentUser}`);
+          //   console.log(`User: ${usr}`);
+          //   resolve(usr);
+          // })
+          // .catch(error => reject(`Auth state user fetch error: ${error}`));
+      }
+      reject();
+    });
   }
 
   loginUser = (email, password) => {
@@ -156,5 +203,11 @@ class AuthService {
   append = message => this.messagesRef.push(message);
 }
 
+const mapStateToProps = state => {
+  const { user } = state.auth;
+  return { user };
+};
+
 AuthService.shared = new AuthService();
-export default AuthService;
+export default connect(mapStateToProps, { loginUserSuccess, userNotAuthenticated })(AuthService);
+// export default AuthService;

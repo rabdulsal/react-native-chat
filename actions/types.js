@@ -1,3 +1,5 @@
+export const VERIFYING_AUTHENTICATION = 'verifying_authentication';
+export const USER_NOT_AUTHENTICATED = 'user_not_authenticated';
 export const SIGNOUT = 'signout';
 
 // SIGNIN

@@ -5,31 +5,48 @@ import {
   StyleSheet,
   ScrollView
  } from 'react-native';
+ import { connect } from 'react-redux';
  import SignUpForm from './SignUpForm';
  import SignInForm from './SignInForm';
+ import { checkAuthentication, userNotAuthenticated } from '../actions';
  import { Spinner } from './common';
- import AuthService from './AuthService';
 
 console.disableYellowBox = true;
 
-export default class Main extends Component {
+class Main extends Component {
   static navigationOptions = {
     title: 'Sign-Up/In',
   }
 
   componentWillMount() {
-    // if (AuthService.shared.currentUser) {
-    //   this.onSuccessfulAuthentication(AuthService.shared.currentUser);
-    // }
+    this.props.checkAuthentication();
   }
 
-  onChangeText = name => this.setState({ name });
+  componentDidMount() {
+    if (this.props.user) {
+      this.onSuccessfulAuthentication(this.props.user);
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { user } = nextProps;
+    if (user) {
+      this.onSuccessfulAuthentication(user);
+    }
+  }
 
   onSuccessfulAuthentication = (user) => {
     this.props.navigation.navigate('Chat', { name: user.username });
   }
 
   render() {
+    if (this.props.isLoading) {
+      console.log('Loading...');
+      return (
+        <Spinner size='large' />
+      );
+    }
+
     return (
       <ScrollView style={styles.container}>
         <SignInForm
@@ -50,3 +67,10 @@ const styles = StyleSheet.create({
     marginBottom: 20
   },
 });
+
+const mapStateToProps = state => {
+  const { user, isLoading } = state.main;
+  return { user, isLoading };
+};
+
+export default connect(mapStateToProps, { checkAuthentication, userNotAuthenticated })(Main);
