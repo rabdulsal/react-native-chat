@@ -8,7 +8,7 @@ import {
  import { connect } from 'react-redux';
  import SignUpForm from './SignUpForm';
  import SignInForm from './SignInForm';
- import { checkAuthentication, userNotAuthenticated } from '../actions';
+ import { checkAuthentication } from '../actions';
  import { Spinner } from './common';
 
 console.disableYellowBox = true;
@@ -20,12 +20,6 @@ class Main extends Component {
 
   componentWillMount() {
     this.props.checkAuthentication();
-  }
-
-  componentDidMount() {
-    if (this.props.user) {
-      this.onSuccessfulAuthentication(this.props.user);
-    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -41,10 +35,7 @@ class Main extends Component {
 
   render() {
     if (this.props.isLoading) {
-      console.log('Loading...');
-      return (
-        <Spinner size='large' />
-      );
+      return <Spinner size='large' />;
     }
 
     return (
@@ -73,4 +64,4 @@ const mapStateToProps = state => {
   return { user, isLoading };
 };
 
-export default connect(mapStateToProps, { checkAuthentication, userNotAuthenticated })(Main);
+export default connect(mapStateToProps, { checkAuthentication })(Main);

@@ -3,10 +3,11 @@ import { Provider } from 'react-redux';
 import { createStackNavigator } from 'react-navigation';
 import { createStore, applyMiddleware } from 'redux';
 import ReduxThunk from 'redux-thunk';
+// import firebase from 'firebase';
 import reducers from './reducers';
 import Main from './components/Main';
 import Chat from './components/Chat';
-import AuthService from './components/AuthService';
+// import AuthService from './components/AuthService';
 
 export default class App extends Component {
   render() {
@@ -14,8 +15,6 @@ export default class App extends Component {
       Main: { screen: Main },
       Chat: { screen: Chat },
     });
-
-    AuthService.shared.observeAuth();
 
     const store = createStore(reducers, {}, applyMiddleware(ReduxThunk));
 

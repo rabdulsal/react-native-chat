@@ -1,6 +1,4 @@
-import firebase from 'firebase';
 import Validator from 'validator';
-import AuthService from '../components/AuthService';
 import {
   SIGNIN_EMAIL_CHANGED,
   SIGNIN_PASSWORD_CHANGED,
@@ -17,10 +15,7 @@ import {
   VERIFYING_AUTHENTICATION,
   USER_NOT_AUTHENTICATED,
 } from './types';
-
-const AUTH_REF = firebase.auth();
-const DATABASE_REF = firebase.database().ref();
-const USERS_REF = DATABASE_REF.child('users');
+import { AUTH_REF, USERS_REF } from '../constants/Firebase';
 
 // SIGNIN / SIGNUP
 export const signinEmailChanged = text => {
@@ -59,9 +54,13 @@ export const signupUsernameChanged = text => {
 };
 
 // HELPERS
-const fetchUserInfo = (user) => {
+const userId = () => {
+  return (AUTH_REF.currentUser || {}).uid;
+};
+
+const fetchUserInfo = () => {
   return new Promise((resolve, reject) => {
-    USERS_REF.child(user.uid)
+    USERS_REF.child(userId())
     .on('value', snapshot => {
       const usr = snapshot.val();
       resolve(usr);
@@ -69,9 +68,20 @@ const fetchUserInfo = (user) => {
   });
 };
 
+const updateUserInfo = ({ email, username }) => {
+  return new Promise((resolve, reject) => {
+    USERS_REF.child(userId())
+    .set({ email, username })
+    .then(() => fetchUserInfo()
+      .then(user => resolve(user))
+      .catch(error => reject(error)))
+    .catch(error => reject(error));
+  });
+};
+
 export const signout = () => {
   return (dispatch) => {
-    AuthService.shared.signout();
+    AUTH_REF.signOut();
     dispatch({ type: SIGNOUT });
     userNotAuthenticated(dispatch);
   };
@@ -82,7 +92,7 @@ export const checkAuthentication = () => {
     dispatch({ type: VERIFYING_AUTHENTICATION });
     AUTH_REF.onAuthStateChanged(user => {
       if (user) {
-        fetchUserInfo(user)
+        fetchUserInfo()
         .then(usr => {
           loginUserSuccess(dispatch, usr);
         })
@@ -91,15 +101,6 @@ export const checkAuthentication = () => {
         userNotAuthenticated(dispatch);
       }
     });
-    // AuthService.shared.checkAuthenticationGetUser()
-    // .then(user => {
-    //   console.log(`Check Auth User: ${user}`);
-    //   loginUserSuccess(dispatch, user);
-    // })
-    // .catch(() => {
-    //   console.log('Auth Check No User');
-    //   userNotAuthenticated();
-    // });
   };
 };
 
@@ -108,9 +109,13 @@ export const loginUser = ({ signinEmail, signinPassword }) => {
     dispatch({ type: LOGIN_USER });
     // Validate & use AuthService stuff here
     if (Validator.isEmail(signinEmail) && signinPassword.trim()) {
-      AuthService.shared.loginUser(signinEmail, signinPassword)
-      .then(user => loginUserSuccess(dispatch, user))
-      .catch(error => signinUserFailed(dispatch, error));
+      AUTH_REF.signInWithEmailAndPassword(signinEmail, signinPassword)
+      .then(() => {
+        fetchUserInfo()
+        .then(user => loginUserSuccess(dispatch, user))
+        .catch(error => signinUserFailed(dispatch, error));
+      })
+      .catch((error) => signinUserFailed(dispatch, error));
     } else {
       const ERROR_MESSAGE = 'There was an error validating your Email or Password';
       signinUserFailed(dispatch, ERROR_MESSAGE);
@@ -122,8 +127,10 @@ export const createUser = ({ signupEmail, signupUsername, signupPassword }) => {
   return (dispatch) => {
     dispatch({ type: CREATE_USER });
     if (Validator.isEmail(signupEmail) && signupUsername.trim() && signupPassword.trim()) {
-      AuthService.shared.createNewUser(signupEmail, signupUsername, signupPassword)
-      .then(user => loginUserSuccess(dispatch, user))
+      AUTH_REF.createUserWithEmailAndPassword(signupEmail, signupPassword)
+      .then(() => updateUserInfo({ email: signupEmail, username: signupUsername })
+        .then(user => loginUserSuccess(dispatch, user))
+        .catch(error => signinUserFailed(dispatch, error)))
       .catch(error => signinUserFailed(dispatch, error));
     } else {
       const ERROR_MESSAGE = 'There was an error validating your Email, Username or Password';

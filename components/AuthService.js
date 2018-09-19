@@ -8,132 +8,16 @@ class AuthService extends React.Component {
   constructor(props) {
     super(props);
     this.init();
-    console.log('Init new AuthService');
     // this.observeAuth();
     this.currentUser = null;
   }
 
   init = () => {
-    firebase.initializeApp(firebaseConfig);
+    // firebase.initializeApp(firebaseConfig);
   }
 
   observeAuth = () => {
     // firebase.auth().onAuthStateChanged(this.onAuthStateChanged);
-  }
-
-  onAuthStateChanged = (user) => {
-    // Inspect user data
-    // user.providerData.forEach(profile => {
-    //   console.log(`Sign-in provider: ${profile.providerId}`);
-    //   console.log(`Provider-specific UID: ${profile.uid}`);
-    //   console.log(`Name: ${profile.displayName}`);
-    //   console.log(`Email: ${profile.email}`);
-    //   console.log(`Photo URL: ${profile.photoURL}`);
-    // });
-    // return new Promise((resolve, reject) => {
-      if (user) {
-        // Do something with user variable like mayber store inspect
-        // this.successfullyAuthenticatedUser();
-        this.props.loginUserSuccess(user);
-        console.log('Login Success Run');
-          // this.fetchUserInfo()
-          // .then(usr => {
-          //   this.currentUser = usr;
-          //   console.log(`AuthState Current User: ${this.currentUser}`);
-          //   this.props.loginUserSuccess(usr).bind(this);
-          //   // return (dispatch) => {
-          //   //   dispatch({
-          //   //     type: SIGNIN_USER_SUCCESS,
-          //   //     payload: usr,
-          //   //   });
-          //   // };
-          // })
-          // .catch(error => console.log(`Auth state user fetch error: ${error}`));
-      } else {
-        this.props.userNotAuthenticated().bind(this);
-        // return (dispatch) => {
-        //   dispatch({
-        //     type: USER_NOT_AUTHENTICATED,
-        //   });
-        // };
-      }
-    //   resolve(null);
-    // });
-  }
-
-  checkAuthenticationGetUser = () => {
-    // return new Promise((resolve, reject) => {
-    //   firebase.auth().onAuthStateChanged(this.onAuthStateChanged)
-    //   .then(user => resolve(user))
-    //   .catch(error => reject(error));
-    // });
-    return new Promise((resolve, reject) => {
-      if (this.currentUser) {
-        console.log('Firebase Current User');
-        resolve(this.currentUser);
-        // Do something with user variable like mayber store inspect
-        // this.successfullyAuthenticatedUser();
-          // this.fetchUserInfo()
-          // .then(usr => {
-          //   this.currentUser = usr;
-          //   console.log(`Current User: ${this.currentUser}`);
-          //   console.log(`User: ${usr}`);
-          //   resolve(usr);
-          // })
-          // .catch(error => reject(`Auth state user fetch error: ${error}`));
-      }
-      reject();
-    });
-  }
-
-  loginUser = (email, password) => {
-    return new Promise((resolve, reject) => {
-      firebase.auth().signInWithEmailAndPassword(email, password)
-        .then(() => {
-          this.fetchUserInfo()
-          .then(user => resolve(user))
-          .catch(error => reject(error));
-        })
-        .catch((error) => reject(error));
-    });
-  }
-
-  createNewUser = (email, username, password) => {
-    return new Promise((resolve, reject) => {
-      firebase.auth().createUserWithEmailAndPassword(email, password)
-        .then(() => this.updateUserInfo({ email, username })
-          .then(user => resolve(user))
-          .catch(error => reject(error)))
-        .catch(error => reject(error));
-    });
-  }
-
-  signout = () => {
-    firebase.auth().signOut()
-    .then()
-    .catch(error => console.log(`Signout Error: ${error}`));
-  }
-
-  updateUserInfo = ({ email, username }) => {
-    return new Promise((resolve, reject) => {
-      firebase.database().ref(`/users/${this.uid}`)
-      .set({ email, username })
-      .then(() => this.fetchUserInfo()
-        .then(user => resolve(user))
-        .catch(error => reject(error)))
-      .catch(error => reject(error));
-    });
-  }
-
-  fetchUserInfo = () => {
-    return new Promise((resolve, reject) => {
-      firebase.database().ref(`/users/${this.uid}`)
-      .on('value', snapshot => {
-        const user = snapshot.val();
-        resolve(user);
-        // TODO: Where to reject?
-      });
-    });
   }
 
   get messagesRef() {
