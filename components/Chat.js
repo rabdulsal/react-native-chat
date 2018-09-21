@@ -103,7 +103,7 @@ class Chat extends Component {
 
   onSignoutPress = () => {
     this.props.signout();
-    this.props.navigation.navigate('Main');
+    this.props.navigation.navigate('main');
   }
 }
 

@@ -6,14 +6,14 @@ import {
   ScrollView
  } from 'react-native';
  import { connect } from 'react-redux';
- import SignUpForm from './SignUpForm';
- import SignInForm from './SignInForm';
+ import SignUpForm from '../components/SignUpForm';
+ import SignInForm from '../components/SignInForm';
  import { checkAuthentication } from '../actions';
- import { Spinner } from './common';
+ import { Spinner } from '../components/common';
 
 console.disableYellowBox = true;
 
-class Main extends Component {
+class AuthScreen extends Component {
   static navigationOptions = {
     title: 'Sign-Up/In',
   }
@@ -30,7 +30,7 @@ class Main extends Component {
   }
 
   onSuccessfulAuthentication = (user) => {
-    this.props.navigation.navigate('Chat', { name: user.username });
+    this.props.navigation.navigate('main', { name: user.username });
   }
 
   render() {
@@ -64,4 +64,4 @@ const mapStateToProps = state => {
   return { user, isLoading };
 };
 
-export default connect(mapStateToProps, { checkAuthentication })(Main);
+export default connect(mapStateToProps, { checkAuthentication })(AuthScreen);
