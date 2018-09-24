@@ -30,7 +30,7 @@ class AuthScreen extends Component {
   }
 
   onSuccessfulAuthentication = (user) => {
-    this.props.navigation.navigate('main', { name: user.username });
+    this.props.navigation.navigate('chat', { name: user.username });
   }
 
   render() {

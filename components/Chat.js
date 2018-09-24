@@ -73,6 +73,13 @@ class Chat extends Component {
     }));
   }
   testImageSend = (messages = []) => {
+    for (let i = 0; i < messages.length; i++) {
+      const message = messages[i];
+      console.log(
+        `Message image: ${message.image}
+        Message text: ${message.text}`
+      );
+    }
     this.updateMessagesState(messages);
   }
 
@@ -81,7 +88,7 @@ class Chat extends Component {
       // NOTE: Must update 'onSend' to 'AuthService.shared.send'
       <GiftedChat
         messages={this.state.messages}
-        onSend={this.testImageSend}
+        onSend={AuthService.shared.send}
         user={this.user}
         renderActions={this.renderCustomActions}
       />

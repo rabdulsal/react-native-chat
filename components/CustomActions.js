@@ -8,9 +8,10 @@ import {
   ViewPropTypes,
   Text,
 } from 'react-native';
-
+import { IMAGES_STORE } from '../constants/Firebase';
 import CameraRollPicker from 'react-native-camera-roll-picker';
-import ImagePicker from 'react-native-image-picker';
+// import ImagePicker from 'react-native-image-picker'; NOTE: Remove if expo works?
+import { ImagePicker } from 'expo';
 import NavBar, { NavButton, NavButtonText, NavTitle } from 'react-native-nav';
 
 const IMAGEPICKER_OPTIONS = {
@@ -72,12 +73,13 @@ export default class CustomActions extends React.Component {
           );
           break;
         case 2:
-          ImagePicker.launchCamera(IMAGEPICKER_OPTIONS, (response) => {
-            this.props.onSend([{
-            image: response.uri,
-          }]);
-            this.setImages([]);
-          });
+          // ImagePicker.launchCamera(IMAGEPICKER_OPTIONS, (response) => {
+          //   this.props.onSend([{
+          //   image: response.uri,
+          // }]);
+          this.onLaunchCameraPress();
+            // this.setImages([]);
+          // });
           break;
         default:
       }
@@ -102,6 +104,29 @@ export default class CustomActions extends React.Component {
     console.log(`Images at Send: ${images}`);
     this.props.onSend(images);
     this.setImages([]);
+  }
+
+  onLaunchCameraPress = async () => {
+    let result = await ImagePicker.launchCameraAsync();
+
+    if (!result.cancelled) {
+      this.uploadImage(result.uri, 'test-image')
+      .then(() => {
+        // Store image-link to message
+
+        // Reset images
+        this.setImages([]);
+      })
+      .catch(error => alert(`Upload image error: ${error}`));
+    }
+  }
+
+  uploadImage = async (uri, imageName) => {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+
+    var ref = IMAGES_STORE.child('imageName');
+    return ref.put(blob);
   }
 
   renderNavBar() {

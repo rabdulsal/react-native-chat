@@ -36,7 +36,7 @@ class AccountScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>Im the AccountScreen component</Text>
+        <Text>Hello User!</Text>
         <Button
           onPress={this.onSignoutPress}
           style={styles.buttonStyle}

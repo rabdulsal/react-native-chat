@@ -5,8 +5,10 @@ import {
   View,
   Text,
   StyleSheet,
+  FlatList,
 } from 'react-native';
 import { connect } from 'react-redux';
+import { fetchContacts } from '../actions';
 
 class ContactsScreen extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -21,12 +23,18 @@ class ContactsScreen extends Component {
   componentWillMount = () => {
     const { username } = this.props.user;
     this.props.navigation.setParams({ username });
+
+    this.props.fetchContacts();
   }
 
   render() {
     return (
       <View style={styles.container}>
-        <Text>Im the ContactsScreen component</Text>
+      <FlatList
+        data={this.props.contacts}
+        renderItem={({ item }) => <Text style={styles.item}>{item.username}</Text>}
+        keyExtractor={item => item.uid}
+      />
       </View>
     );
   }
@@ -46,7 +54,8 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => {
   const { user } = state.auth;
-  return { user };
+  const { contacts } = state.contacts;
+  return { user, contacts };
 };
 
-export default connect(mapStateToProps, {})(ContactsScreen);
+export default connect(mapStateToProps, { fetchContacts })(ContactsScreen);
