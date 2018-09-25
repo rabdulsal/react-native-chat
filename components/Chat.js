@@ -72,16 +72,6 @@ class Chat extends Component {
       messages: GiftedChat.append(previousState.messages, messages),
     }));
   }
-  testImageSend = (messages = []) => {
-    for (let i = 0; i < messages.length; i++) {
-      const message = messages[i];
-      console.log(
-        `Message image: ${message.image}
-        Message text: ${message.text}`
-      );
-    }
-    this.updateMessagesState(messages);
-  }
 
   render() {
     return (
@@ -101,7 +91,6 @@ class Chat extends Component {
       so GiftedChat knows which side of the screen to put our chat bubbles on.
       Return our name and our UID for GiftedChat to parse
     */
-
     return {
       name: this.props.navigation.state.params.name,
       _id: AuthService.shared.uid,

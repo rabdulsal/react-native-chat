@@ -2,12 +2,12 @@ import _ from 'lodash';
 import {
   FETCH_CONTACTS,
 } from './types';
-import { USERS_REF } from '../constants/Firebase';
+import { usersRef } from '../constants/Firebase';
 
 export const fetchContacts = () => {
   console.log('Fetch Contacts');
   return (dispatch) => {
-    USERS_REF.on('value', snapshot => {
+    usersRef().on('value', snapshot => {
       /* LODASH */
       // const contacts = _.map(snapshot.val(), (uid) => {
       //   return { uid };

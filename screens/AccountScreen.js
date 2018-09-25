@@ -34,9 +34,10 @@ class AccountScreen extends Component {
   }
 
   render() {
+    const { username } = this.props.user ? this.props.user : 'User';
     return (
       <View style={styles.container}>
-        <Text>Hello User!</Text>
+        <Text>Hello {username}</Text>
         <Button
           onPress={this.onSignoutPress}
           style={styles.buttonStyle}

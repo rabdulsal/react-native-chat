@@ -15,7 +15,7 @@ import {
   VERIFYING_AUTHENTICATION,
   USER_NOT_AUTHENTICATED,
 } from './types';
-import { AUTH_REF, USERS_REF } from '../constants/Firebase';
+import { authRef, usersRef } from '../constants/Firebase';
 
 // SIGNIN / SIGNUP
 export const signinEmailChanged = text => {
@@ -55,12 +55,12 @@ export const signupUsernameChanged = text => {
 
 // HELPERS
 const userId = () => {
-  return (AUTH_REF.currentUser || {}).uid;
+  return (authRef().currentUser || {}).uid;
 };
 
 const fetchUserInfo = () => {
   return new Promise((resolve, reject) => {
-    USERS_REF.child(userId())
+    usersRef().child(userId())
     .on('value', snapshot => {
       const usr = snapshot.val();
       resolve(usr);
@@ -70,7 +70,7 @@ const fetchUserInfo = () => {
 
 const updateUserInfo = ({ email, username }) => {
   return new Promise((resolve, reject) => {
-    USERS_REF.child(userId())
+    usersRef().child(userId())
     .set({ email, username })
     .then(() => fetchUserInfo()
       .then(user => resolve(user))
@@ -81,7 +81,7 @@ const updateUserInfo = ({ email, username }) => {
 
 export const signout = () => {
   return (dispatch) => {
-    AUTH_REF.signOut();
+    authRef().signOut();
     dispatch({ type: SIGNOUT });
     userNotAuthenticated(dispatch);
   };
@@ -90,7 +90,7 @@ export const signout = () => {
 export const checkAuthentication = () => {
   return (dispatch) => {
     dispatch({ type: VERIFYING_AUTHENTICATION });
-    AUTH_REF.onAuthStateChanged(user => {
+    authRef().onAuthStateChanged(user => {
       if (user) {
         fetchUserInfo()
         .then(usr => {
@@ -109,7 +109,7 @@ export const loginUser = ({ signinEmail, signinPassword }) => {
     dispatch({ type: LOGIN_USER });
     // Validate & use AuthService stuff here
     if (Validator.isEmail(signinEmail) && signinPassword.trim()) {
-      AUTH_REF.signInWithEmailAndPassword(signinEmail, signinPassword)
+      authRef().signInWithEmailAndPassword(signinEmail, signinPassword)
       .then(() => {
         fetchUserInfo()
         .then(user => loginUserSuccess(dispatch, user))
@@ -127,7 +127,7 @@ export const createUser = ({ signupEmail, signupUsername, signupPassword }) => {
   return (dispatch) => {
     dispatch({ type: CREATE_USER });
     if (Validator.isEmail(signupEmail) && signupUsername.trim() && signupPassword.trim()) {
-      AUTH_REF.createUserWithEmailAndPassword(signupEmail, signupPassword)
+      authRef().createUserWithEmailAndPassword(signupEmail, signupPassword)
       .then(() => updateUserInfo({ email: signupEmail, username: signupUsername })
         .then(user => loginUserSuccess(dispatch, user))
         .catch(error => signinUserFailed(dispatch, error)))

@@ -8,19 +8,10 @@ import {
   ViewPropTypes,
   Text,
 } from 'react-native';
-import { IMAGES_STORE } from '../constants/Firebase';
 import CameraRollPicker from 'react-native-camera-roll-picker';
 // import ImagePicker from 'react-native-image-picker'; NOTE: Remove if expo works?
-import { ImagePicker } from 'expo';
+import { ImagePicker, Permissions } from 'expo';
 import NavBar, { NavButton, NavButtonText, NavTitle } from 'react-native-nav';
-
-const IMAGEPICKER_OPTIONS = {
-  title: 'Please pick photo',
-  storageOptions: {
-    skipBackup: true,
-    path: 'images'
-  }
-};
 
 export default class CustomActions extends React.Component {
 
@@ -73,13 +64,7 @@ export default class CustomActions extends React.Component {
           );
           break;
         case 2:
-          // ImagePicker.launchCamera(IMAGEPICKER_OPTIONS, (response) => {
-          //   this.props.onSend([{
-          //   image: response.uri,
-          // }]);
           this.onLaunchCameraPress();
-            // this.setImages([]);
-          // });
           break;
         default:
       }
@@ -92,41 +77,30 @@ export default class CustomActions extends React.Component {
   }
 
   onPhotoLibrarySendPressed = () => {
-    console.log('Send pressed');
     this.setModalVisible(false);
 
     const images = this.getImages().map((image) => {
-      console.log(`Photo image: ${image}`);
       return {
         image: image.uri,
       };
     });
-    console.log(`Images at Send: ${images}`);
     this.props.onSend(images);
     this.setImages([]);
   }
 
-  onLaunchCameraPress = async () => {
-    let result = await ImagePicker.launchCameraAsync();
-
-    if (!result.cancelled) {
-      this.uploadImage(result.uri, 'test-image')
-      .then(() => {
-        // Store image-link to message
-
-        // Reset images
-        this.setImages([]);
-      })
-      .catch(error => alert(`Upload image error: ${error}`));
-    }
+  askPermissionsAsync = async () => {
+    await Permissions.askAsync(Permissions.CAMERA);
+    await Permissions.askAsync(Permissions.CAMERA_ROLL);
+    // you would probably do something to verify that permissions
+    // are actually granted, but I'm skipping that for brevity
   }
 
-  uploadImage = async (uri, imageName) => {
-    const response = await fetch(uri);
-    const blob = await response.blob();
-
-    var ref = IMAGES_STORE.child('imageName');
-    return ref.put(blob);
+  onLaunchCameraPress = async () => {
+    await this.askPermissionsAsync();
+    const result = await ImagePicker.launchCameraAsync();
+    if (!result.cancelled) {
+      this.props.onSend([{ image: result.uri }]);
+    }
   }
 
   renderNavBar() {

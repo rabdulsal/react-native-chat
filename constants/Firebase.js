@@ -3,10 +3,12 @@ import firebaseConfig from '../private/FirebaseConfig';
 
 firebase.initializeApp(firebaseConfig);
 
-export const AUTH_REF = firebase.auth();
-export const DATABASE_REF = firebase.database().ref();
-export const STORAGE_REF = firebase.storage().ref();
-export const USERS_REF = DATABASE_REF.child('users');
-export const MESSAGES_REF = DATABASE_REF.child('messages');
-export const IMAGES_REF = DATABASE_REF.child('images');
-export const IMAGES_STORE = STORAGE_REF.child('image');
+export const authRef = () => { return firebase.auth(); };
+export const currentUser = () => { return authRef().currentUser; };
+export const databaseRef = () => { return firebase.database().ref(); };
+export const storageRef = () => { return firebase.storage().ref(); };
+export const usersRef = () => { return databaseRef().child('users'); };
+export const messagesRef = () => { return databaseRef().child('messages'); };
+export const imagesRef = () => { return databaseRef().child('images'); };
+export const imagesStore = () => { return storageRef().child('image'); };
+// TODO: Will eventually be 'images' following testing
