@@ -8,7 +8,7 @@ import {
 import { Button } from 'react-native-elements';
 import { GiftedChat } from 'react-native-gifted-chat';
 import { connect } from 'react-redux';
-import AuthService from './AuthService';
+import AuthService from './AuthService'; // Update to use redux ChatActions
 import { signout } from '../actions';
 import CustomActions from './CustomActions';
 
@@ -26,7 +26,6 @@ class Chat extends Component {
 
     return {
       title: (params || {}).name || 'Chat!',
-      headerLeft: null, // NOTE: Must clear stack for Android
       headerRight: (
         <Button
           title="Logout"
@@ -61,28 +60,15 @@ class Chat extends Component {
     AuthService.shared.off();
   }
 
-  renderCustomActions = (props) => {
-    return (
-      <CustomActions {...props} />
-    );
+  onSignoutPress = () => {
+    this.props.signout();
+    this.props.navigation.navigate('main');
   }
 
   updateMessagesState = (messages = []) => {
     this.setState(previousState => ({
       messages: GiftedChat.append(previousState.messages, messages),
     }));
-  }
-
-  render() {
-    return (
-      // NOTE: Must update 'onSend' to 'AuthService.shared.send'
-      <GiftedChat
-        messages={this.state.messages}
-        onSend={AuthService.shared.send}
-        user={this.user}
-        renderActions={this.renderCustomActions}
-      />
-    );
   }
 
   get user() {
@@ -97,9 +83,21 @@ class Chat extends Component {
     };
   }
 
-  onSignoutPress = () => {
-    this.props.signout();
-    this.props.navigation.navigate('main');
+  renderCustomActions = (props) => {
+    return (
+      <CustomActions {...props} />
+    );
+  }
+
+  render() {
+    return (
+      <GiftedChat
+        messages={this.state.messages}
+        onSend={AuthService.shared.send}
+        user={this.user}
+        renderActions={this.renderCustomActions}
+      />
+    );
   }
 }
 

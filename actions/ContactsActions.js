@@ -4,8 +4,7 @@ import {
 } from './types';
 import { usersRef } from '../constants/Firebase';
 
-export const fetchContacts = () => {
-  console.log('Fetch Contacts');
+export const fetchContacts = (currentUser) => {
   return (dispatch) => {
     usersRef().on('value', snapshot => {
       /* LODASH */
@@ -17,13 +16,16 @@ export const fetchContacts = () => {
       //   payload: contacts,
       // });
       /* BASIC */
-      var usrs = [];
+      const USERS = [];
         snapshot.forEach(child => {
-          usrs.push(child.val())
+          const USERNAME = child.val().username;
+          if (USERNAME !== currentUser) {
+            USERS.push(child.val());
+          }
         });
         dispatch({
           type: FETCH_CONTACTS,
-          payload: usrs,
+          payload: USERS,
         });
       });
       // .catch(error => alert(error));
